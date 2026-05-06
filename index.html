@@ -1,0 +1,155 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#165a4a">
+    <title>Gold Ledger</title>
+    <link rel="manifest" href="manifest.webmanifest">
+    <link rel="stylesheet" href="styles.css">
+  </head>
+  <body>
+    <header class="app-header">
+      <div>
+        <p class="eyebrow">Gold Ledger</p>
+        <h1>Holdings, value, and sheet entries in one place</h1>
+      </div>
+      <button id="refreshPrice" class="icon-button" type="button" aria-label="Refresh gold value" title="Refresh gold value">
+        <span aria-hidden="true">$</span>
+      </button>
+    </header>
+
+    <main>
+      <section class="summary-grid" aria-label="Gold summary">
+        <article class="metric primary">
+          <span class="metric-label">Current value</span>
+          <strong id="currentValue">--</strong>
+          <small id="priceSource">Enter today's IBJA rate</small>
+        </article>
+        <article class="metric">
+          <span class="metric-label">Total grams</span>
+          <strong id="totalGrams">--</strong>
+          <small>Across all entries</small>
+        </article>
+        <article class="metric">
+          <span class="metric-label">Invested</span>
+          <strong id="investedValue">--</strong>
+          <small id="avgBuyPrice">Avg buy --</small>
+        </article>
+        <article class="metric">
+          <span class="metric-label">Gain / loss</span>
+          <strong id="gainLoss">--</strong>
+          <small id="gainLossPct">Absolute -- · XIRR --</small>
+        </article>
+      </section>
+
+      <section class="workspace">
+        <form id="entryForm" class="panel" autocomplete="off">
+          <div class="panel-heading">
+            <h2>Add purchase</h2>
+            <p>Matches the columns in your sheet.</p>
+          </div>
+
+          <label>
+            Date
+            <input id="date" name="date" type="date" required>
+          </label>
+
+          <div class="field-row">
+            <label>
+              Grams
+              <input id="grams" name="grams" type="number" min="0.001" step="0.001" required>
+            </label>
+            <label>
+              Price/gm
+              <input id="pricePerGram" name="pricePerGram" type="number" min="1" step="0.01" required>
+            </label>
+          </div>
+
+          <label>
+            Notes
+            <input id="notes" name="notes" type="text" maxlength="80" placeholder="Scheme, chit, jeweller...">
+          </label>
+
+          <button class="primary-button" type="submit">Add row</button>
+          <button id="cancelEdit" class="secondary-button hidden" type="button">Cancel edit</button>
+          <p id="formStatus" class="status" role="status"></p>
+        </form>
+
+        <section class="panel table-panel">
+          <div class="panel-heading split">
+            <div>
+              <h2>Entries</h2>
+              <p id="entryCount">0 rows</p>
+            </div>
+            <button id="exportCsv" class="secondary-button" type="button">Export CSV</button>
+          </div>
+
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Date</th>
+                  <th>Grams</th>
+                  <th>Price/gm</th>
+                  <th>Notes</th>
+                  <th></th>
+                </tr>
+              </thead>
+              <tbody id="entriesBody"></tbody>
+            </table>
+          </div>
+        </section>
+      </section>
+
+      <section class="insights-grid" aria-label="Useful stats">
+        <article class="panel">
+          <div class="panel-heading">
+            <h2>Meaningful stats</h2>
+            <p>Quick signals from your ledger.</p>
+          </div>
+          <dl class="stats-list">
+            <div><dt>Best buy</dt><dd id="bestBuy">--</dd></div>
+            <div><dt>Highest buy</dt><dd id="highestBuy">--</dd></div>
+            <div><dt>Latest addition</dt><dd id="latestEntry">--</dd></div>
+            <div><dt>Portfolio margin</dt><dd id="portfolioMargin">--</dd></div>
+          </dl>
+        </article>
+
+        <article class="panel chart-panel">
+          <div class="panel-heading split">
+            <div>
+              <h2>Purchase prices</h2>
+              <p>Price per gram for each buy.</p>
+            </div>
+            <span id="chartRange" class="chart-range">--</span>
+          </div>
+          <canvas id="purchaseChart" width="720" height="300" aria-label="Purchase price chart"></canvas>
+        </article>
+
+        <article class="panel settings-panel">
+          <div class="panel-heading">
+            <h2>Settings</h2>
+            <p>Manual IBJA value and optional Sheet sync.</p>
+          </div>
+          <label>
+            Manual IBJA 999 rate/g
+            <input id="manualGoldRate" type="number" min="1" step="0.01" placeholder="Example: 12200">
+          </label>
+          <button id="savePriceSettings" class="secondary-button" type="button">Save rate</button>
+          <label>
+            Google Sheet web app URL
+            <input id="sheetUrl" type="url" placeholder="https://script.google.com/macros/s/.../exec">
+          </label>
+          <div class="settings-actions">
+            <button id="saveSheetUrl" class="secondary-button" type="button">Save</button>
+            <button id="loadSheet" class="secondary-button" type="button">Load from Sheet</button>
+          </div>
+          <p id="syncStatus" class="status"></p>
+        </article>
+      </section>
+    </main>
+
+    <script src="app.js" type="module"></script>
+  </body>
+</html>
